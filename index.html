@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>自定义导航</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+  <!-- Tailwind 配置 -->
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#3B82F6',
+            secondary: '#10B981',
+            dark: {
+              100: '#1E293B',
+              200: '#0F172A',
+              300: '#020617'
+            }
+          },
+          fontFamily: {
+            inter: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .bg-gradient-custom {
+        background: linear-gradient(135deg, #4F46E5 0%, #3B82F6 100%);
+      }
+      .card-hover {
+        transition: all 0.3s ease;
+      }
+      .card-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      }
+      .scale-hover {
+        transition: transform 0.2s ease;
+      }
+      .scale-hover:hover {
+        transform: scale(1.1);
+      }
+      .fade-in {
+        animation: fadeIn 0.3s ease-in-out;
+      }
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+    }
+  </style>
+</head>
+
+<body class="font-inter bg-gray-50 dark:bg-dark-200 text-gray-800 dark:text-gray-200 min-h-screen transition-colors duration-300">
+  <!-- 页面容器 -->
+  <div class="container mx-auto px-4 py-8 max-w-6xl">
+    <!-- 头部区域 -->
+    <header class="flex flex-col md:flex-row justify-between items-center mb-8">
+      <div class="flex items-center space-x-2 mb-4 md:mb-0">
+        <div class="w-10 h-10 bg-gradient-custom rounded-lg flex items-center justify-center text-white text-xl font-bold">
+          <i class="fa fa-compass"></i>
+        </div>
+        <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-custom">自定义导航</h1>
+      </div>
+      
+      <div class="flex items-center space-x-4">
+        <!-- 主题切换按钮 -->
+        <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-dark-100 transition-colors">
+          <i class="fa fa-moon-o dark:hidden text-xl"></i>
+          <i class="fa fa-sun-o hidden dark:block text-xl"></i>
+        </button>
+        
+        <!-- 网站管理按钮 -->
+        <button id="manage-sites-btn" class="bg-primary text-white px-4 py-2 rounded-lg font-medium hover:bg-primary/90 transition-colors flex items-center">
+          <i class="fa fa-cog mr-2"></i> 管理网站
+        </button>
+      </div>
+    </header>
+    
+    <!-- 主要内容区域 -->
+    <main class="max-w-3xl mx-auto">
+      <!-- 搜索区域 -->
+      <div class="mb-10 relative">
+        <div class="bg-white dark:bg-dark-100 rounded-xl shadow-lg p-1 transition-all duration-300">
+          <div class="flex">
+            <input 
+              type="text" 
+              id="search-input" 
+              placeholder="搜索任何内容..." 
+              class="flex-1 px-4 py-4 text-lg bg-transparent focus:outline-none"
+            >
+            <button id="search-button" class="bg-gradient-custom text-white px-6 rounded-lg font-medium hover:opacity-90 transition-opacity">
+              搜索
+            </button>
+          </div>
+          
+          <!-- 搜索引擎选择器 -->
+          <div class="flex items-center justify-between mt-2 px-4">
+            <span class="text-sm text-gray-500 dark:text-gray-400">搜索引擎:</span>
+            <div class="flex space-x-2">
+              <button class="search-engine-btn active px-3 py-1 rounded-full text-sm bg-gray-100 dark:bg-dark-300" data-engine="google">
+                <i class="fa fa-google mr-1"></i> Google
+              </button>
+              <button class="search-engine-btn px-3 py-1 rounded-full text-sm bg-gray-100 dark:bg-dark-300" data-engine="baidu">
+                <i class="fa fa-baidu mr-1"></i> 百度
+              </button>
+              <button class="search-engine-btn px-3 py-1 rounded-full text-sm bg-gray-100 dark:bg-dark-300" data-engine="bing">
+                <i class="fa fa-bing mr-1"></i> Bing
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 导航分类 -->
+      <div class="grid grid-cols-1 gap-6">
+        <!-- 常用网站 -->
+        <div class="bg-white dark:bg-dark-100 rounded-xl shadow-md p-5 transition-all duration-300">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-lg font-semibold flex items-center">
+              <i class="fa fa-star text-yellow-400 mr-2"></i> 常用网站
+            </h2>
+            <button id="add-site-btn" class="text-primary hover:text-primary/80 transition-colors flex items-center">
+              <i class="fa fa-plus-circle mr-1"></i> 添加
+            </button>
+          </div>
+          
+          <div id="sites-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+            <!-- 网站卡片会通过 JavaScript 动态生成 -->
+          </div>
+          
+          <!-- 空状态提示 -->
+          <div id="empty-sites" class="hidden py-10 text-center">
+            <div class="w-16 h-16 mx-auto mb-4 bg-gray-200 dark:bg-dark-300 rounded-full flex items-center justify-center">
+              <i class="fa fa-bookmark-o text-gray-400 dark:text-gray-500 text-2xl"></i>
+            </div>
+            <p class="text-gray-500 dark:text-gray-400">暂无自定义网站，点击上方"添加"按钮添加网站</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  
+  <!-- 添加/编辑网站模态框 -->
+  <div id="site-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden fade-in">
+    <div class="bg-white dark:bg-dark-100 rounded-xl shadow-xl max-w-md w-full mx-4 overflow-hidden">
+      <div class="px-6 py-4 border-b dark:border-gray-700 flex justify-between items-center">
+        <h3 id="modal-title" class="text-xl font-semibold">添加网站</h3>
+        <button id="close-modal" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+          <i class="fa fa-times text-xl"></i>
+        </button>
+      </div>
+      
+      <div class="p-6">
+        <form id="site-form">
+          <div class="mb-4">
+            <label for="site-name" class="block text-sm font-medium mb-1">网站名称</label>
+            <input type="text" id="site-name" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-dark-300 focus:outline-none focus:ring-2 focus:ring-primary dark:text-white" placeholder="例如：GitHub">
+          </div>
+          
+          <div class="mb-4">
+            <label for="site-url" class="block text-sm font-medium mb-1">网站URL</label>
+            <input type="url" id="site-url" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-dark-300 focus:outline-none focus:ring-2 focus:ring-primary dark:text-white" placeholder="例如：https://github.com">
+          </div>
+          
+          <div class="mb-4">
+            <label for="site-icon" class="block text-sm font-medium mb-1">网站图标</label>
+            <input type="text" id="site-icon" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-dark-300 focus:outline-none focus:ring-2 focus:ring-primary dark:text-white" placeholder="Font Awesome图标类名，例如：fa-github">
+          </div>
+          
+          <div class="mb-4">
+            <label for="site-category" class="block text-sm font-medium mb-1">网站分类</label>
+            <select id="site-category" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-dark-300 focus:outline-none focus:ring-2 focus:ring-primary dark:text-white">
+              <option value="常用">常用</option>
+              <option value="工具">工具</option>
+              <option value="学习">学习</option>
+              <option value="娱乐">娱乐</option>
+              <option value="购物">购物</option>
+            </select>
+          </div>
+          
+          <div class="flex justify-end space-x-3 pt-4">
+            <button type="button" id="cancel-form" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-300 transition-colors">取消</button>
+            <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors">保存</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 管理网站模态框 -->
+  <div id="manage-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden fade-in">
+    <div class="bg-white dark:bg-dark-100 rounded-xl shadow-xl max-w-3xl w-full mx-4 overflow-hidden">
+      <div class="px-6 py-4 border-b dark:border-gray-700 flex justify-between items-center">
+        <h3 class="text-xl font-semibold">管理网站</h3>
+        <button id="close-manage-modal" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+          <i class="fa fa-times text-xl"></i>
+        </button>
+      </div>
+      
+      <div class="p-6">
+        <div class="overflow-x-auto">
+          <table class="min-w-full">
+            <thead>
+              <tr class="border-b dark:border-gray-700">
+                <th class="px-4 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-400">名称</th>
+                <th class="px-4 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-400">URL</th>
+                <th class="px-4 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-400">分类</th>
+                <th class="px-4 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-400">操作</th>
+              </tr>
+            </thead>
+            <tbody id="manage-sites-table">
+              <!-- 网站管理表格内容会通过 JavaScript 动态生成 -->
+            </tbody>
+          </table>
+        </div>
+        
+        <!-- 空状态提示 -->
+        <div id="empty-manage-sites" class="hidden py-10 text-center">
+          <div class="w-16 h-16 mx-auto mb-4 bg-gray-200 dark:bg-dark-300 rounded-full flex items-center justify-center">
+            <i class="fa fa-bookmark-o text-gray-400 dark:text-gray-500 text-2xl"></i>
+          </div>
+          <p class="text-gray-500 dark:text-gray-400">暂无自定义网站，点击主页"添加"按钮添加网站</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // 初始化数据
+    let sites = JSON.parse(localStorage.getItem('customSites')) || [
+      { id: 1, name: '百度', url: 'https://www.baidu.com', icon: 'fa-baidu', category: '常用' },
+      { id: 2, name: '谷歌', url: 'https://www.google.com', icon: 'fa-google', category: '常用' },
+      { id: 3, name: 'B站', url: 'https://www.bilibili.com', icon: 'fa-play-circle', category: '常用' },
+      { id: 4, name: '淘宝', url: 'https://www.taobao.com', icon: 'fa-shopping-bag', category: '购物' },
+      { id: 5, name: 'QQ邮箱', url: 'https://mail.qq.com', icon: 'fa-envelope', category: '常用' },
+      { id: 6, name: '微博', url: 'https://weibo.com', icon: 'fa-weibo', category: '常用' },
+      { id: 7, name: '谷歌翻译', url: 'https://translate.google.cn', icon: 'fa-language', category: '工具' },
+      { id: 8, name: 'Figma', url: 'https://www.figma.com', icon: 'fa-paint-brush', category: '工具' },
+      { id: 9, name: 'GitHub', url: 'https://www.github.com', icon: 'fa-github', category: '工具' },
+      { id: 10, name: 'Can I Use', url: 'https://caniuse.com', icon: 'fa-code', category: '工具' },
+      { id: 11, name: '云服务', url: 'https://cloud.tencent.com', icon: 'fa-cloud', category: '工具' },
+      { id: 12, name: '在线工具', url: 'https://tool.lu', icon: 'fa-wrench', category: '工具' },
+      { id: 13, name: '知乎', url: 'https://www.zhihu.com', icon: 'fa-comments', category: '学习' },
+      { id: 14, name: '慕课网', url: 'https://www.icourse163.org', icon: 'fa-graduation-cap', category: '学习' },
+      { id: 15, name: '力扣', url: 'https://leetcode-cn.com', icon: 'fa-code', category: '学习' },
+      { id: 16, name: 'W3Schools', url: 'https://www.w3schools.com', icon: 'fa-html5', category: '学习' },
+      { id: 17, name: 'CSDN', url: 'https://www.csdn.net', icon: 'fa-code', category: '学习' }
+    ];
+    
+    let currentSiteId = null; // 当前编辑的网站ID
+    let currentCategory = '常用'; // 当前显示的分类
+    
+    // DOM 元素
+    const sitesContainer = document.getElementById('sites-container');
+    const emptySites = document.getElementById('empty-sites');
+    const siteModal = document.getElementById('site-modal');
+    const manageModal = document.getElementById('manage-modal');
+    const manageSitesTable = document.getElementById('manage-sites-table');
+    const emptyManageSites = document.getElementById('empty-manage-sites');
+    const modalTitle = document.getElementById('modal-title');
+    const siteForm = document.getElementById('site-form');
+    const siteName = document.getElementById('site-name');
+    const siteUrl = document.getElementById('site-url');
+    const siteIcon = document.getElementById('site-icon');
+    const siteCategory = document.getElementById('site-category');
+    
+    // 搜索引擎配置
+    const searchEngines = {
+      google: 'https://www.google.com/search?q=',
+      baidu: 'https://www.baidu.com/s?wd=',
+      bing: 'https://www.bing.com/search?q='
+    };
+    
+    let currentEngine = 'google'; // 默认搜索引擎
+    
+    // 初始化
+    function init() {
+      renderSites();
+      renderManageSites();
+      setupEventListeners();
+      setupDarkMode();
+    }
+    
+    // 设置事件监听器
+    function setupEventListeners() {
+      // 搜索按钮点击事件
+      document.getElementById('search-button').addEventListener('click', handleSearch);
+      
+      // 搜索输入框回车事件
+      document.getElementById('search-input').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          handleSearch();
+        }
+      });
+      
+      // 搜索引擎切换
+      document.querySelectorAll('.search-engine-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.search-engine-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentEngine = btn.dataset.engine;
+        });
+      });
+      
+      // 添加网站按钮
+      document.getElementById('add-site-btn').addEventListener('click', () => {
+        openAddSiteModal();
+      });
+      
+      // 管理网站按钮
+      document.getElementById('manage-sites-btn').addEventListener('click', () => {
+        renderManageSites();
+        manageModal.classList.remove('hidden');
+      });
+      
+      // 关闭模态框按钮
+      document.getElementById('close-modal').addEventListener('click', () => {
+        siteModal.classList.add('hidden');
+      });
+      
+      // 关闭管理模态框按钮
+      document.getElementById('close-manage-modal').addEventListener('click', () => {
+        manageModal.classList.add('hidden');
+      });
+      
+      // 取消表单按钮
+      document.getElementById('cancel-form').addEventListener('click', () => {
+        siteModal.classList.add('hidden');
+      });
+      
+      // 表单提交事件
+      siteForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        saveSite();
+      });
+      
+      // 主题切换
+      document.getElementById('theme-toggle').addEventListener('click', toggleDarkMode);
+    }
+    
+    // 处理搜索
+    function handleSearch() {
+      const query = document.getElementById('search-input').value.trim();
+      if (query) {
+        window.open(searchEngines[currentEngine] + encodeURIComponent(query), '_blank');
+      }
+    }
+    
+    // 打开添加网站模态框
+    function openAddSiteModal() {
+      modalTitle.textContent = '添加网站';
+      siteName.value = '';
+      siteUrl.value = '';
+      siteIcon.value = '';
+      siteCategory.value = '常用';
+      currentSiteId = null;
+      siteModal.classList.remove('hidden');
+      siteName.focus();
+    }
+    
+    // 打开编辑网站模态框
+    function openEditSiteModal(id) {
+      const site = sites.find(s => s.id === id);
+      if (site) {
+        modalTitle.textContent = '编辑网站';
+        siteName.value = site.name;
+        siteUrl.value = site.url;
+        siteIcon.value = site.icon;
+        siteCategory.value = site.category;
+        currentSiteId = id;
+        siteModal.classList.remove('hidden');
+        siteName.focus();
+      }
+    }
+    
+    // 保存网站
+    function saveSite() {
+      const name = siteName.value.trim();
+      const url = siteUrl.value.trim();
+      const icon = siteIcon.value.trim();
+      const category = siteCategory.value;
+      
+      if (!name || !url || !icon) {
+        alert('请填写完整的网站信息');
+        return;
+      }
+      
+      if (!url.startsWith('http')) {
+        alert('请输入有效的URL，必须以http或https开头');
+        return;
+      }
+      
+      if (currentSiteId) {
+        // 编辑现有网站
+        const index = sites.findIndex(s => s.id === currentSiteId);
+        if (index !== -1) {
+          sites[index] = { ...sites[index], name, url, icon, category };
+        }
+      } else {
+        // 添加新网站
+        const newId = sites.length > 0 ? Math.max(...sites.map(s => s.id)) + 1 : 1;
+        sites.push({ id: newId, name, url, icon, category });
+      }
+      
+      localStorage.setItem('customSites', JSON.stringify(sites));
+      renderSites();
+      renderManageSites();
+      siteModal.classList.add('hidden');
+    }
+    
+    // 删除网站
+    function deleteSite(id) {
+      if (confirm('确定要删除这个网站吗？')) {
+        sites = sites.filter(s => s.id !== id);
+        localStorage.setItem('customSites', JSON.stringify(sites));
+        renderSites();
+        renderManageSites();
+      }
+    }
+    
+    // 渲染网站卡片
+    function renderSites() {
+      const filteredSites = sites.filter(s => s.category === currentCategory);
+      
+      sitesContainer.innerHTML = '';
+      
+      if (filteredSites.length === 0) {
+        emptySites.classList.remove('hidden');
+        return;
+      }
+      
+      emptySites.classList.add('hidden');
+      
+      filteredSites.forEach(site => {
+        const card = document.createElement('div');
+        card.className = 'bg-white dark:bg-dark-100 rounded-lg p-3 flex flex-col items-center justify-center hover:bg-gray-50 dark:hover:bg-dark-200 transition-colors cursor-pointer card-hover';
+        card.innerHTML = `
+          <div class="w-12 h-12 mb-2 rounded-full flex items-center justify-center bg-blue-100 dark:bg-blue-900/30">
+            <i class="fa ${site.icon} text-blue-600 dark:text-blue-400 text-xl"></i>
+          </div>
+          <span class="text-sm text-center truncate w-full">${site.name}</span>
+        `;
+        
+        card.addEventListener('click', () => {
+          window.open(site.url, '_blank');
+        });
+        
+        card.addEventListener('contextmenu', (e) => {
+          e.preventDefault();
+          openEditSiteModal(site.id);
+        });
+        
+        sitesContainer.appendChild(card);
+      });
+    }
+    
+    // 渲染管理网站表格
+    function renderManageSites() {
+      manageSitesTable.innerHTML = '';
+      
+      if (sites.length === 0) {
+        emptyManageSites.classList.remove('hidden');
+        return;
+      }
+      
+      emptyManageSites.classList.add('hidden');
+      
+      sites.forEach(site => {
+        const row = document.createElement('tr');
+        row.className = 'border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-dark-200 transition-colors';
+        row.innerHTML = `
+          <td class="px-4 py-3">
+            <div class="flex items-center">
+              <div class="w-8 h-8 rounded-full flex items-center justify-center bg-blue-100 dark:bg-blue-900/30 mr-3">
+                <i class="fa ${site.icon} text-blue-600 dark:text-blue-400"></i>
+              </div>
+              ${site.name}
+            </div>
+          </td>
+          <td class="px-4 py-3">
+            <a href="${site.url}" target="_blank" class="text-primary hover:underline">${site.url}</a>
+          </td>
+          <td class="px-4 py-3">${site.category}</td>
+          <td class="px-4 py-3">
+            <button class="text-primary hover:text-primary/80 mr-3 transition-colors" onclick="openEditSiteModal(${site.id})">
+              <i class="fa fa-pencil"></i> 编辑
+            </button>
+            <button class="text-red-500 hover:text-red-700 transition-colors" onclick="deleteSite(${site.id})">
+              <i class="fa fa-trash"></i> 删除
+            </button>
+          </td>
+        `;
+        
+        manageSitesTable.appendChild(row);
+      });
+    }
+    
+    // 设置深色模式
+    function setupDarkMode() {
+      if (localStorage.getItem('darkMode') === 'true' || 
+          (localStorage.getItem('darkMode') === null && 
+           window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      }
+    }
+    
+    // 切换深色模式
+    function toggleDarkMode() {
+      const isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('darkMode', isDark);
+    }
+    
+    // 初始化
+    init();
+  </script>
+</body>
+</html>

@@ -58,6 +58,9 @@
         from { opacity: 0; }
         to { opacity: 1; }
       }
+      .engine-active {
+        @apply shadow-md dark:shadow-lg dark:shadow-primary/30 shadow-primary/30;
+      }
     }
   </style>
 </head>
@@ -109,13 +112,13 @@
           <div class="flex items-center justify-between mt-2 px-4">
             <span class="text-sm text-gray-500 dark:text-gray-400">搜索引擎:</span>
             <div class="flex space-x-2">
-              <button class="search-engine-btn active px-3 py-1 rounded-full text-sm bg-gray-100 dark:bg-dark-300" data-engine="google">
+              <button class="search-engine-btn px-3 py-1 rounded-full text-sm bg-gray-100 dark:bg-dark-300" data-engine="google">
                 <i class="fa fa-google mr-1"></i> Google
               </button>
               <button class="search-engine-btn px-3 py-1 rounded-full text-sm bg-gray-100 dark:bg-dark-300" data-engine="baidu">
                 <i class="fa fa-baidu mr-1"></i> 百度
               </button>
-              <button class="search-engine-btn px-3 py-1 rounded-full text-sm bg-gray-100 dark:bg-dark-300" data-engine="bing">
+              <button class="search-engine-btn active engine-active px-3 py-1 rounded-full text-sm bg-gray-100 dark:bg-dark-300" data-engine="bing">
                 <i class="fa fa-bing mr-1"></i> Bing
               </button>
             </div>
@@ -283,7 +286,7 @@
       bing: 'https://www.bing.com/search?q='
     };
     
-    let currentEngine = 'google'; // 默认搜索引擎
+    let currentEngine = 'bing'; // 默认搜索引擎
     
     // 初始化
     function init() {
@@ -308,8 +311,10 @@
       // 搜索引擎切换
       document.querySelectorAll('.search-engine-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-          document.querySelectorAll('.search-engine-btn').forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
+          document.querySelectorAll('.search-engine-btn').forEach(b => {
+            b.classList.remove('active', 'engine-active');
+          });
+          btn.classList.add('active', 'engine-active');
           currentEngine = btn.dataset.engine;
         });
       });
@@ -333,6 +338,13 @@
       // 关闭管理模态框按钮
       document.getElementById('close-manage-modal').addEventListener('click', () => {
         manageModal.classList.add('hidden');
+      });
+      
+      // 点击模态框外部关闭
+      manageModal.addEventListener('click', (e) => {
+        if (e.target === manageModal) {
+          manageModal.classList.add('hidden');
+        }
       });
       
       // 取消表单按钮

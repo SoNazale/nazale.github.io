@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的导航站</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 2rem;
+            font-weight: 400;
+        }
+        .category {
+            margin-bottom: 2rem;
+        }
+        .category h2 {
+            color: #555;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 0.5rem;
+            font-weight: 400;
+        }
+        .links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        a {
+            background: #f8f9fa;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s ease;
+            flex: 1 1 calc(25% - 1rem);
+            min-width: 180px;
+            text-align: center;
+        }
+        a:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        @media (max-width: 768px) {
+            a {
+                flex: 1 1 calc(50% - 1rem);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>我的导航站</h1>
+        
+        <div class="category">
+            <h2>常用网站</h2>
+            <div class="links">
+                <a href="https://www.baidu.com">百度</a>
+                <a href="https://www.bilibili.com">B站</a>
+                <a href="https://www.taobao.com">淘宝</a>
+                <a href="https://www.zhihu.com">知乎</a>
+            </div>
+        </div>
+        
+        <div class="category">
+            <h2>社交媒体</h2>
+            <div class="links">
+                <a href="https://weibo.com">微博</a>
+                <a href="https://www.douyin.com">抖音</a>
+                <a href="https://www.instagram.com">Instagram</a>
+                <a href="https://twitter.com">Twitter</a>
+            </div>
+        </div>
+        
+        <div class="category">
+            <h2>工具资源</h2>
+            <div class="links">
+                <a href="https://github.com">GitHub</a>
+                <a href="https://stackoverflow.com">Stack Overflow</a>
+                <a href="https://www.figma.com">Figma</a>
+                <a href="https://www.canva.com">Canva</a>
+            </div>
+        </div>
+        
+        <div class="category">
+            <h2>学习平台</h2>
+            <div class="links">
+                <a href="https://www.coursera.org">Coursera</a>
+                <a href="https://www.udemy.com">Udemy</a>
+                <a href="https://www.khanacademy.org">Khan Academy</a>
+                <a href="https://www.codecademy.com">Codecademy</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 添加主题切换功能（可选）
+        const toggleTheme = () => {
+            document.body.classList.toggle('dark-theme');
+        };
+    </script>
+</body>
+</html>
+    
